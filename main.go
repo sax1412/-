@@ -10,7 +10,7 @@ import (
 )
 
 func crawl(url string) []string {
-	list, err := links.Extract(url)
+	list, err := links.Extract(url, os.Args[2:3][0])
 	if err != nil {
 		log.Print(err)
 	}
@@ -28,7 +28,7 @@ func kid(w http.ResponseWriter, r *http.Request) {
 func main() {
 	worklist := make(chan []string, 10)
 	go func() {
-		worklist <- os.Args[1:]
+		worklist <- os.Args[1:2]
 	}()
 	seen := make(map[string]bool)
 	for list := range worklist {

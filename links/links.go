@@ -19,7 +19,7 @@ func insert(name string, url string) {
 	exe.Exec(name, url, time.Now())
 }
 
-func Extract(url string) ([]string, error) {
+func Extract(url string, keys string) ([]string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -53,8 +53,8 @@ func Extract(url string) ([]string, error) {
 			}
 		}
 	}
-	if strings.Contains(s, "范冰冰") {
-		insert("范冰冰", url)
+	if strings.Contains(s, keys) {
+		insert(keys, url)
 	}
 	forEachNode(doc, visitNode)
 	return links, nil
