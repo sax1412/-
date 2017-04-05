@@ -6,6 +6,6 @@
 表明：star</br>
 字段：id int 主键,name varchar,url varchar,ct datetime</br>
 </br>
-命令行运行 main.exe http://www.xxxx.xxx(起始网址) 柯南(待检索关键字)
+命令行运行 main.exe http://www.xxxx.xxx(起始网址) 柯南(待检索关键字)</br>
 </br>
-注：此爬虫比较简单,只记录了关键字和对应的网址,以后逐渐改善
+<i>注：此爬虫比较简单,只记录了关键字和对应的网址,以后逐渐改善</i>
