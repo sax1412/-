@@ -1,7 +1,6 @@
 package util
 
 func Substr(str string, start int, length int) string {
-	//rs := []rune(str)
 	rl := len(str)
 	end := 0
 
