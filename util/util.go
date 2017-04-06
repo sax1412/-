@@ -29,3 +29,22 @@ func Substr(str string, start int, length int) string {
 
 	return string(str[start:end])
 }
+
+func Str_delete(s string) string {
+	status := 0
+	var str []rune
+	for _, r := range s {
+		if r == rune('<') {
+			status = 1
+			continue
+		}
+		if r == rune('>') {
+			status = 0
+			continue
+		}
+		if status == 0 {
+			str = append(str, r)
+		}
+	}
+	return string(str)
+}
