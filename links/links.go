@@ -6,18 +6,11 @@ import (
 	"golang.org/x/net/html"
 	"strings"
 	_"github.com/go-sql-driver/mysql"
-	"database/sql"
-	"time"
 	"io/ioutil"
 	"bytes"
+	"../util"
+	"../db"
 )
-
-var db, _ = sql.Open("mysql", "root@/pachong?charset=utf8")
-
-func insert(name string, url string) {
-	exe, _ := db.Prepare("insert star set name = ?,url = ?, ct = ?")
-	exe.Exec(name, url, time.Now())
-}
 
 func Extract(url string, keys string) ([]string, error) {
 	resp, err := http.Get(url)
@@ -30,11 +23,11 @@ func Extract(url string, keys string) ([]string, error) {
 	}
 	byte, _ := ioutil.ReadAll(resp.Body)
 	s := string(byte)
-	doc, _ := html.Parse(bytes.NewReader(byte))
-	resp.Body.Close()
+	doc, err := html.Parse(bytes.NewReader(byte))
 	if err != nil {
 		return nil, fmt.Errorf("parsing %s as HTML: %v", url, err)
 	}
+	resp.Body.Close()
 	var links []string
 	visitNode := func(n *html.Node) {
 		if n.Type == html.ElementNode && n.Data == "a" {
@@ -54,7 +47,23 @@ func Extract(url string, keys string) ([]string, error) {
 		}
 	}
 	if strings.Contains(s, keys) {
-		insert(keys, url)
+		title := "暂无标题"
+		start, end := 0, 0
+		h_index := []string{"<h1", "<h2", "<h3", "<h4", "<h5"}
+		h_position := []string{"</h1>", "</h2>", "</h3>", "</h4>", "</h5>"}
+		for k, v := range h_index {
+			if strings.Contains(s, v) {
+				start = strings.Index(s, v)
+				end = strings.Index(s, h_position[k])
+				break
+			}
+		}
+		if end > 0 {
+			title = util.Substr(s, start, end - start)
+			title_slice := strings.Split(title, ">")
+			title = title_slice[1]
+		}
+		db.Insert(keys, title, url)
 	}
 	forEachNode(doc, visitNode)
 	return links, nil
