@@ -25,7 +25,7 @@ func myRedirect(req *http.Request, via []*http.Request) (e error) {
 	return
 }
 
-func Extract(link string, keys string) ([]string, error) {
+func Extract(link string, keys string, tp int) ([]string, error) {
 	var links []string
 	client := &http.Client{
 		CheckRedirect: myRedirect,
@@ -84,7 +84,12 @@ func Extract(link string, keys string) ([]string, error) {
 				title = str
 			}
 		}
-		db.Insert(keys, title, link)
+		switch tp {
+		case 0:util.Excel(keys, title, link)
+		case 1:db.Insert(keys, title, link)
+		default:
+			util.Excel(keys, title, link)
+		}
 	}
 	forEachNode(doc, visitNode)
 	return links, nil

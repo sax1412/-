@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"os"
 	"encoding/json"
+	"strconv"
 )
 
 func crawl(url string) []string {
-	list, err := links.Extract(url, os.Args[2:3][0])
+	tp, _ := strconv.Atoi(os.Args[3:4][0])
+	list, err := links.Extract(url, os.Args[2:3][0], tp)
 	if err != nil {
 		log.Print(err)
 	}
