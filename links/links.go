@@ -66,6 +66,7 @@ func Extract(link string, keys string, tp int) ([]string, error) {
 		}
 	}
 	if strings.Contains(s, keys) {
+		e := util.Excel{}
 		title := "暂无标题"
 		start, end := 0, 0
 		h_index := []string{"<h1", "<h2", "<h3", "<h4", "<h5"}
@@ -85,10 +86,10 @@ func Extract(link string, keys string, tp int) ([]string, error) {
 			}
 		}
 		switch tp {
-		case 0:util.Excel(keys, title, link)
+		case 0:e.Excel(keys, title, link)
 		case 1:db.Insert(keys, title, link)
 		default:
-			util.Excel(keys, title, link)
+			e.Excel(keys, title, link)
 		}
 	}
 	forEachNode(doc, visitNode)
