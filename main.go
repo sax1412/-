@@ -27,7 +27,15 @@ func kid(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(w)
 }
 
+var Dir string
+
 func main() {
+	Dir = "img/"
+	err := os.Mkdir(Dir, 0777)
+	if err != nil {
+		isexist := os.IsExist(err)
+		fmt.Println(isexist)
+	}
 	worklist := make(chan []string, 20)
 	var n = 1
 	go func() {

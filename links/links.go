@@ -12,6 +12,9 @@ import (
 	"../db"
 	"errors"
 	"net/url"
+	"os"
+	"strconv"
+	"math/rand"
 )
 
 var redirectCount int = 0
@@ -64,6 +67,18 @@ func Extract(link string, keys string, tp int) ([]string, error) {
 				links = append(links, link.String())
 			}
 		}
+		if n.Type == html.ElementNode && n.Data == "img" {
+			for _, a := range n.Attr {
+				if a.Key != "src" {
+					continue
+				}
+				link, err := resp.Request.URL.Parse(a.Val)
+				if err != nil {
+					continue
+				}
+				go img_save(link.String())
+			}
+		}
 	}
 	if strings.Contains(s, keys) {
 		e := util.Excel{}
@@ -102,5 +117,23 @@ func forEachNode(n *html.Node, pre func(n *html.Node)) {
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		forEachNode(c, pre)
+	}
+}
+
+func img_save(link string) {
+	source, _ := http.Get(link)
+	file, err := os.Create("img/" + strconv.Itoa(rand.Int()))
+	if err != nil {
+		panic(err)
+	}
+	byte, err1 := ioutil.ReadAll(source.Body)
+	if err1 == nil {
+		if len(byte) > 1024 {
+			_, err2 := file.Write(byte)
+			defer file.Close()
+			if err2 != nil {
+				panic(err2)
+			}
+		}
 	}
 }
